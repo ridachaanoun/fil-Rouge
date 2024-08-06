@@ -6,7 +6,10 @@ use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvid
 use Illuminate\Support\Facades\Gate;
 use App\Models\Category;
 use App\Policies\CategoryPolicy;
-
+use App\Models\Quiz;
+use App\Models\Question;
+use App\Policies\QuizPolicy;
+use App\Policies\QuestionPolicy;
 class AuthServiceProvider extends ServiceProvider
 {
     /**
@@ -16,6 +19,8 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         Category::class => CategoryPolicy::class,
+        Quiz::class => QuizPolicy::class,
+        Question::class => QuestionPolicy::class,
     ];
 
     /**

@@ -12,8 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('quiz_attempts', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('quiz_id')->nullable();
+            $table->unsignedBigInteger('user_id');
+            $table->integer('score');
             $table->timestamps();
+
+            $table->foreign('quiz_id')->references('id')->on('quizzes')->onDelete('set null');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

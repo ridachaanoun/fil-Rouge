@@ -37,7 +37,11 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Role::class);
     }
-
+    public function quizAttempts()
+    {
+        return $this->hasMany(QuizAttempt::class);
+    }
+    
     /**
      * Get the attributes that should be cast.
      *
