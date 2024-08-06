@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\QuizController;
 use App\Http\Controllers\Api\QuestionController;
 use App\Http\Controllers\Api\QuizAttemptController;
+use App\Http\Controllers\Api\ProfileController;
 
 Route::post('register', [RegisterController::class, 'register']);
 Route::post('login', [LoginController::class, 'login']);
@@ -40,6 +41,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('quizzes/{quiz}/attempts', [QuizAttemptController::class, 'store']);
         Route::get('attempts', [QuizAttemptController::class, 'index']);
         Route::get('attempts/{attempt}', [QuizAttemptController::class, 'show']);
+
+        // profiles
+        Route::post('profile/bio', [ProfileController::class, 'updateBio']);
+        Route::post('profile/picture', [ProfileController::class, 'updateProfilePicture']);
+        Route::get('profiles', [ProfileController::class, 'index']);
+        Route::get('profiles/{id}', [ProfileController::class, 'show']);
 });
 
 

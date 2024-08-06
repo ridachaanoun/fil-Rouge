@@ -41,6 +41,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(QuizAttempt::class);
     }
+    public function profile()
+{
+    return $this->hasOne(Profile::class);
+}
     
     /**
      * Get the attributes that should be cast.

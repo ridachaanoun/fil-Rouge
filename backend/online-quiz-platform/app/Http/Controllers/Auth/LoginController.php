@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Profile;
 
 class LoginController extends Controller
 {
@@ -32,11 +33,15 @@ class LoginController extends Controller
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
+        // Retrieve the profile associated with the user
+        $profile = Profile::where('user_id', $user->id)->first();
+
         return response()->json([
             'message' => 'Logged in successfully',
             'user' => $user,
             'access_token' => $token,
-            'token_type' => 'Bearer'
+            'token_type' => 'Bearer',
+            'profile' =>$profile
         ]);
     }
     

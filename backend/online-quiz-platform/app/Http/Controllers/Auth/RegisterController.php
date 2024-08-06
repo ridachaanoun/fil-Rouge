@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use App\Models\Role;
+use App\Models\Profile;
 
 class RegisterController extends Controller
 {
@@ -44,10 +45,19 @@ class RegisterController extends Controller
 
         $token = $user->createToken('Personal Access Token')->plainTextToken;
 
-        return response()->json([
-            'message' => 'User registered successfully',
-            'user' => $user,
-            'token' => $token,
-        ]);
+                // Create a profile for the user
+                $profile = Profile::create([
+                    'user_id' => $user->id,
+                    'bio' => null,
+                    'profile_picture' => null,
+                ]);
+
+                return response()->json([
+                    'message' => 'User registered successfully',
+                    'user' => $user,
+                    'token' => $token,
+                    'profile' =>$profile 
+                ]);
+        
     }
 }
