@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Question;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use App\Models\Quiz;
 use Illuminate\Support\Facades\Auth;
@@ -36,7 +36,7 @@ class QuizController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
-            'description' => 'nullable|string',
+            'description' => 'required|string',
         ]);
     
         if ($validator->fails()) {
@@ -55,7 +55,20 @@ class QuizController extends Controller
             'description' => $request->description,
             'user_id' => $user->id, // Set the user_id
         ]);
-    
+
+        $followers = $user->followers;
+
+    foreach ($followers as $follower) {
+        // Create notification
+        Notification::create([
+            'user_id' => $follower->id,
+            'type' => 'quiz_added',
+            'data' => json_encode([
+                'message' => "A new quiz was added by " . $user->name,
+                'quiz' => $quiz,
+            ]),
+        ]);
+    }
         return response()->json(['quiz' => $quiz], 201);
     }
 

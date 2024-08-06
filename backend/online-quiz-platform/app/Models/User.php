@@ -42,10 +42,19 @@ class User extends Authenticatable
         return $this->hasMany(QuizAttempt::class);
     }
     public function profile()
-{
-    return $this->hasOne(Profile::class);
-}
-    
+    {
+        return $this->hasOne(Profile::class);
+    }
+    public function followers()
+    {
+        return $this->belongsToMany(User::class, 'follows', 'followed_id', 'follower_id');
+    }
+
+    public function following()
+    {
+        return $this->belongsToMany(User::class, 'follows', 'follower_id', 'followed_id');
+    }
+
     /**
      * Get the attributes that should be cast.
      *

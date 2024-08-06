@@ -14,6 +14,7 @@ class Quiz extends Model
         'description',
         'category_id',
         'created_by',
+        'user_id'
     ];
 
     public function category()
