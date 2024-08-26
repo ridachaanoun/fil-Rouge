@@ -37,6 +37,7 @@ class QuizController extends Controller
             'title' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
             'description' => 'required|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
     
         if ($validator->fails()) {
@@ -44,34 +45,38 @@ class QuizController extends Controller
         }
     
         $user = Auth::user(); // Get the currently authenticated user
-
+    
         if (!$user) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
-
+    
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('images', 'public');
+        }
+    
         $quiz = Quiz::create([
             'title' => $request->title,
             'category_id' => $request->category_id,
             'description' => $request->description,
             'user_id' => $user->id, // Set the user_id
+            'image' => $imagePath // Save the image path
         ]);
-
         $followers = $user->followers;
 
-    foreach ($followers as $follower) {
-        // Create notification
-        Notification::create([
-            'user_id' => $follower->id,
-            'type' => 'quiz_added',
-            'data' => json_encode([
-                'message' => "A new quiz was added by " . $user->name,
-                'quiz' => $quiz,
-            ]),
-        ]);
+        foreach ($followers as $follower) {
+            // Create notification
+            Notification::create([
+                'user_id' => $follower->id,
+                'type' => 'quiz_added',
+                'data' => json_encode([
+                    'message' => "A new quiz was added by " . $user->name,
+                    'quiz' => $quiz,
+                ]),
+            ]);
+        }
+            return response()->json(['quiz' => $quiz], 201);
     }
-        return response()->json(['quiz' => $quiz], 201);
-    }
-
     /**
      * Display the specified quiz.
      *
@@ -93,19 +98,47 @@ class QuizController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $quiz = Quiz::findOrFail($id);
+        // Find the quiz or fail with a 404
+        $quiz = Quiz::find($id);
+    
+        if (!$quiz) {
+            return response()->json(['message' => 'Quiz not found'], 404);
+        }
+    
+        // Authorize the user to update the quiz
         $this->authorize('update', $quiz);
-        $request->validate([
+    
+        // Validate the request
+        $validator = Validator::make($request->all(), [
             'title' => 'nullable|string|max:255',
             'category_id' => 'nullable|exists:categories,id',
             'description' => 'nullable|string',
+            'image' => 'nullable|file|mimes:jpeg,png,jpg|max:2048',
         ]);
-
-        $quiz = Quiz::findOrFail($id);
-        $quiz->update($request->only('title', 'category_id', 'description'));
-
+    
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+    
+        // Update the quiz with validated data
+        $validatedData = $validator->validated();
+        $quiz->fill($validatedData);
+    
+        // Handle file upload if provided
+        if ($request->hasFile('image')) {
+            // Store the image
+            $path = $request->file('image')->store('public/quiz_images');
+            // Update the quiz image path
+            $quiz->image = basename($path);
+        }
+    
+        // Save the updated quiz
+        $quiz->save();
+    
+        // Return the updated quiz as a JSON response
         return response()->json(['quiz' => $quiz], 200);
     }
+    
 
     /**
      * Remove the specified quiz.

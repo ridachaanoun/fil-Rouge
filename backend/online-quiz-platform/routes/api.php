@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\UserController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\QuizController;
 use App\Http\Controllers\Api\QuestionController;
@@ -56,9 +57,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/unfollow/{id}', [FollowController::class, 'unfollow']);
     Route::get('/followers/{id}', [FollowController::class, 'followers']);
     Route::get('/following/{id}', [FollowController::class, 'following']);
+
+// get user loged in 
+Route::get('/user', [UserController::class, 'show']);
 });
 
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+// Route::get('/user', function (Request $request) {
+//     return $request->user();
+// })->middleware('auth:sanctum');
