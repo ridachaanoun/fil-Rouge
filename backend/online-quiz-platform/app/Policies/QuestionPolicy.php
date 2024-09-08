@@ -43,7 +43,7 @@ class QuestionPolicy
         if (in_array($user->role->name, ['admin', 'super_admin'])) {
             return true;
         }
-
+    
         // Users can only delete questions from their own quizzes
         return $user->id === $question->quiz->user_id;
     }

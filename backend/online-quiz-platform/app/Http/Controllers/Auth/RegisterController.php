@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -9,15 +8,10 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\Profile;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class RegisterController extends Controller
 {
-    /**
-     * Handle registration request.
-     *
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -30,10 +24,7 @@ class RegisterController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        // Check if there are any users in the database
         $firstUser = User::count() === 0;
-
-        // Assign 'super_admin' role to the first registered user, otherwise assign 'user' role
         $roleId = $firstUser ? Role::where('name', 'super_admin')->first()->id : Role::where('name', 'user')->first()->id;
 
         $user = User::create([
@@ -43,21 +34,20 @@ class RegisterController extends Controller
             'role_id' => $roleId,
         ]);
 
-        $token = $user->createToken('Personal Access Token')->plainTextToken;
+        $token = JWTAuth::fromUser($user);
 
-                // Create a profile for the user
-                $profile = Profile::create([
-                    'user_id' => $user->id,
-                    'bio' => null,
-                    'profile_picture' => null,
-                ]);
+        $profile = Profile::create([
+            'user_id' => $user->id,
+            'bio' => null,
+            'profile_picture' => null,
+        ]);
 
-                return response()->json([
-                    'message' => 'User registered successfully',
-                    'user' => $user,
-                    'token' => $token,
-                    'profile' =>$profile 
-                ]);
-        
+        return response()->json([
+            'message' => 'User registered successfully',
+            'user' => $user,
+            'token' => $token,
+            'profile' => $profile
+        ]);
     }
 }
+

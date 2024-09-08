@@ -59,21 +59,27 @@ class QuestionController extends Controller
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, $id)
-    {
-        $quiz = Quiz::findOrFail($id);
-        $this->authorize('update', $quiz);
-        $request->validate([
-            'question' => 'nullable|string',
-            'options' => 'nullable|array',
-            'correct_option' => 'nullable|string',
-        ]);
+public function update(Request $request, $id)
+{
+    // Find the question by its ID
+    $question = Question::findOrFail($id);
 
-        $question = Question::findOrFail($id);
-        $question->update($request->only('question', 'options', 'correct_option'));
+    // Authorize the user based on the question's quiz
+    $this->authorize('update', $question);
 
-        return response()->json(['question' => $question], 200);
-    }
+    // Validate the incoming request
+    $request->validate([
+        'question' => 'nullable|string',
+        'options' => 'nullable|array',
+        'correct_option' => 'nullable|string',
+    ]);
+
+    // Update the question with the validated data
+    $question->update($request->only('question', 'options', 'correct_option'));
+
+    // Return a successful response with the updated question
+    return response()->json(['question' => $question], 200);
+}
 
     /**
      * Remove the specified question.
@@ -83,11 +89,15 @@ class QuestionController extends Controller
      */
     public function destroy($id)
     {
-        $quiz = Quiz::findOrFail($id);
-        $this->authorize('delete', $quiz);
         $question = Question::findOrFail($id);
+    // if (!$question) {
+    //     return response()->json(['message' => "the question doesn't exist"], 404);
+    // }
+        // Authorize the deletion of the question
+        $this->authorize('delete', $question);
+        
         $question->delete();
-
+    
         return response()->json(['message' => 'Question deleted successfully'], 200);
     }
 }

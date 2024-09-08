@@ -64,12 +64,16 @@ class ProfileController extends Controller
     //  Get all profiles.
     public function index()
     {
-        $profiles = Profile::with('user')->get();
-
+        // Load profiles with the related user and their role
+        $profiles = Profile::with(['user.role'])->get();
+    
         $profiles->each(function ($profile) {
+            // Add profile picture URL to each profile
             $profile->profile_picture_url = $profile->profile_picture_url;
+            // Add the role name to each profile
+            $profile->role_name = $profile->user->role->name ?? 'No Role';
         });
-
+    
         return response()->json($profiles, 200);
     }
 
@@ -86,5 +90,23 @@ class ProfileController extends Controller
         $profile->profile_picture_url = $profile->profile_picture_url;
 
         return response()->json($profile, 200);
+    }
+    // get user
+    public function show_user()
+    {
+        $user = Auth::user();
+
+        $profile = Profile::with('user')->find($user->id);
+
+        if (!$profile) {
+            return response()->json(['message' => 'Profile not found'], 404);
+        }
+
+        $profile->profile_picture_url = $profile->profile_picture_url;
+        $profile->role = $user->role->name;
+
+        return response()->json([
+            'profile' =>$profile,
+        ]);
     }
 }

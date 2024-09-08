@@ -8,8 +8,10 @@ use App\Models\Category;
 use App\Policies\CategoryPolicy;
 use App\Models\Quiz;
 use App\Models\Question;
+use App\Models\User;
 use App\Policies\QuizPolicy;
 use App\Policies\QuestionPolicy;
+use App\Policies\UserPolicy;
 class AuthServiceProvider extends ServiceProvider
 {
     /**
@@ -21,6 +23,7 @@ class AuthServiceProvider extends ServiceProvider
         Category::class => CategoryPolicy::class,
         Quiz::class => QuizPolicy::class,
         Question::class => QuestionPolicy::class,
+        User::class =>UserPolicy::class,
     ];
 
     /**

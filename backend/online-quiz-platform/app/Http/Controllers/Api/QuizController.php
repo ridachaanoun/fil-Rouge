@@ -9,6 +9,7 @@ use App\Models\Quiz;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use \Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Storage;
 
 class QuizController extends Controller
 {
@@ -85,7 +86,7 @@ class QuizController extends Controller
      */
     public function show($id)
     {
-        $quiz = Quiz::with('questions')->findOrFail($id);
+        $quiz = Quiz::with('questions','category')->findOrFail($id);
         return response()->json(['quiz' => $quiz], 200);
     }
 
@@ -100,14 +101,14 @@ class QuizController extends Controller
     {
         // Find the quiz or fail with a 404
         $quiz = Quiz::find($id);
-    
+
         if (!$quiz) {
             return response()->json(['message' => 'Quiz not found'], 404);
         }
-    
+
         // Authorize the user to update the quiz
         $this->authorize('update', $quiz);
-    
+
         // Validate the request
         $validator = Validator::make($request->all(), [
             'title' => 'nullable|string|max:255',
@@ -115,26 +116,30 @@ class QuizController extends Controller
             'description' => 'nullable|string',
             'image' => 'nullable|file|mimes:jpeg,png,jpg|max:2048',
         ]);
-    
+
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-    
+
         // Update the quiz with validated data
         $validatedData = $validator->validated();
         $quiz->fill($validatedData);
-    
+
         // Handle file upload if provided
         if ($request->hasFile('image')) {
-            // Store the image
-            $path = $request->file('image')->store('public/quiz_images');
-            // Update the quiz image path
-            $quiz->image = basename($path);
+            // Delete the old image if it exists
+            if ($quiz->image && Storage::disk('public')->exists($quiz->image)) {
+                Storage::disk('public')->delete($quiz->image);
+            }
+
+            // Store the image and set the path to be stored in the database
+            $path = $request->file('image')->store('images', 'public');
+            $quiz->image = $path; // Store the full path relative to the storage directory
         }
-    
+
         // Save the updated quiz
         $quiz->save();
-    
+
         // Return the updated quiz as a JSON response
         return response()->json(['quiz' => $quiz], 200);
     }

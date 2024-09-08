@@ -22,4 +22,8 @@ class Profile extends Model
     {
         return $this->profile_picture ? Storage::url($this->profile_picture) : null;
     }
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
 }

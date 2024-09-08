@@ -16,7 +16,7 @@ use App\Http\Controllers\Api\FollowController;
 Route::post('register', [RegisterController::class, 'register']);
 Route::post('login', [LoginController::class, 'login']);
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('jwt.auth')->group(function () {
     Route::post('logout', [LoginController::class, 'logout']);
     Route::post('/categories', [CategoryController::class, 'store']);
     Route::put('/categories/{id}', [CategoryController::class, 'update']);
@@ -58,9 +58,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/followers/{id}', [FollowController::class, 'followers']);
     Route::get('/following/{id}', [FollowController::class, 'following']);
 
-// get user loged in 
-Route::get('/user', [UserController::class, 'show']);
+    // get user logged in 
+    Route::get('/user', [ProfileController::class, 'show_user']);
+// change role 
+    Route::put('/users/{user}/role', [UserController::class, 'updateRole']);
+    // Route::get('/user', [UserController::class, 'show']);
 });
+
 
 
 // Route::get('/user', function (Request $request) {
