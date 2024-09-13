@@ -20,7 +20,7 @@ class QuizAttemptController extends Controller
     public function store(Request $request, $quizId)
     {
         $validator = Validator::make($request->all(), [
-            'answers' => 'required|array',
+            // 'answers' => 'required|array',
             'score' => 'required|integer',
         ]);
     
@@ -33,7 +33,7 @@ class QuizAttemptController extends Controller
         $attempt = QuizAttempt::create([
             'quiz_id' => $quiz->id,
             'user_id' => $user->id,
-            'answers' => $request->answers,
+            // 'answers' => $request->answers,
             'score' => $request->score,
         ]);
 
