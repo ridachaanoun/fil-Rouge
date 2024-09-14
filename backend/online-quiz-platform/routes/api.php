@@ -57,7 +57,7 @@ Route::middleware('jwt.auth')->group(function () {
     Route::post('/unfollow/{id}', [FollowController::class, 'unfollow']);
     Route::get('/followers/{id}', [FollowController::class, 'followers']);
     Route::get('/following/{id}', [FollowController::class, 'following']);
-
+    Route::get('/is-following/{id}', [FollowController::class, 'isFollowing']);
     // get user logged in 
     Route::get('/user', [ProfileController::class, 'show_user']);
 // change role 

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+
 class FollowController extends Controller
 {
     public function follow(Request $request, $id)
@@ -33,6 +34,7 @@ class FollowController extends Controller
 
         return response()->json(['message' => 'You are not following this user'], 400);
     }
+
     public function followers($id)
     {
         $user = User::findOrFail($id);
@@ -47,5 +49,16 @@ class FollowController extends Controller
         $following = $user->following;
 
         return response()->json(['following' => $following], 200);
+    }
+
+    // New method to check if the authenticated user is following the specified user
+    public function isFollowing($id)
+    {
+        $user = Auth::user();
+        $userToCheck = User::findOrFail($id);
+
+        $isFollowing = $user->following->contains($userToCheck->id);
+
+        return response()->json(['isFollowing' => $isFollowing], 200);
     }
 }
