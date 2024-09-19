@@ -38,10 +38,26 @@ class FollowController extends Controller
     public function followers($id)
     {
         $user = User::findOrFail($id);
-        $followers = $user->followers;
-
-        return response()->json(['followers' => $followers], 200);
+    
+        // Get followers with their profile picture
+        $followers = $user->followers()->with('profile')->get();
+    
+        // Map the followers and include the profile picture URL if available
+        $followersWithProfilePicture = $followers->map(function ($follower) {
+            return [
+                'id' => $follower->id,
+                'name' => $follower->name,
+                'email' => $follower->email,
+                'created_at' => $follower->created_at,
+                'updated_at' => $follower->updated_at,
+                'profile_picture' => optional($follower->profile)->profile_picture_url, // Profile picture URL
+                'pivot' => $follower->pivot, // Keep the pivot data
+            ];
+        });
+    
+        return response()->json(['followers' => $followersWithProfilePicture], 200);
     }
+    
 
     public function following($id)
     {

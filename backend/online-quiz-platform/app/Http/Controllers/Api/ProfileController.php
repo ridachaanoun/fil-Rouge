@@ -109,4 +109,28 @@ class ProfileController extends Controller
             'profile' =>$profile,
         ]);
     }
+        // Method to remove profile picture
+        public function removeProfilePicture()
+        {
+            $user = Auth::user();
+            $profile = $user->profile;
+    
+            if (!$profile) {
+                return response()->json(['message' => 'Profile not found'], 404);
+            }
+    
+            // Delete the current profile picture from storage if it exists
+            if ($profile->profile_picture && $profile->profile_picture !== 'default-profile.png') {
+                Storage::delete($profile->profile_picture);
+            }
+    
+            // Set the profile picture to the default image
+            $profile->profile_picture = 'default-profile.png';
+            $profile->save();
+    
+            return response()->json([
+                'message' => 'Profile picture removed successfully',
+                'profile_picture_url' => '/storage/default-profile.png'
+            ], 200);
+        }
 }

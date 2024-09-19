@@ -30,6 +30,7 @@ Route::middleware('jwt.auth')->group(function () {
     Route::get('quizzes/{quiz}', [QuizController::class, 'show']);
     Route::put('quizzes/{quiz}', [QuizController::class, 'update']);
     Route::delete('quizzes/{quiz}', [QuizController::class, 'destroy']);
+    Route::get('user-quizzes/{id}', [QuizController::class, 'getUserQuizzes']);
 
     // Questions
     Route::post('questions', [QuestionController::class, 'store']);
@@ -48,6 +49,7 @@ Route::middleware('jwt.auth')->group(function () {
     Route::post('profile/picture', [ProfileController::class, 'updateProfilePicture']);
     Route::get('profiles', [ProfileController::class, 'index']);
     Route::get('profiles/{id}', [ProfileController::class, 'show']);
+    Route::post('/profile/remove-picture', [ProfileController::class, 'removeProfilePicture']);
 
     // Notification routes
     Route::put('/notifications/{id}/read', [NotificationsController::class, 'markAsRead']);
