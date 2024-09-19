@@ -19,7 +19,7 @@ class UserPolicy
      * @param \App\Models\User $user
      * @return bool
      */
-    public function updateRole(User $authUser, User $user)
+    public function updateRole(User $authUser)
     {
         // Check if the authenticated user is a super_admin
         return $authUser->role && $authUser->role->name === 'super_admin';

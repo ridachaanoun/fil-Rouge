@@ -64,7 +64,11 @@ Route::middleware('jwt.auth')->group(function () {
     Route::get('/user', [ProfileController::class, 'show_user']);
 // change role 
     Route::put('/users/{user}/role', [UserController::class, 'updateRole']);
-    // Route::get('/user', [UserController::class, 'show']);
+    
+    Route::put('/user/update-username', [UserController::class, 'updateUsername']);
+    Route::put('/user/update-email', [UserController::class, 'updateEmail']);
+    Route::put('/user/update-password', [UserController::class, 'updatePassword']);
+    Route::put('/user/update-role/{user}', [UserController::class, 'updateRole']);
 });
 
 
