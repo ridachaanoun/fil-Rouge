@@ -45,12 +45,29 @@ class QuizAttemptController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
+    // Return all quiz attempts for the authenticated user
     public function index()
     {
-        $user = Auth::user();
-        $attempts = QuizAttempt::with('quiz')->get();
+        try {
+            // Get the authenticated user
+            $user = Auth::user();
 
-        return response()->json(['attempts' => $attempts], 200);
+            // Fetch the quiz attempts for the user
+            $quizAttempts = QuizAttempt::with('quiz')
+                ->where('user_id', $user->id)
+                ->get();
+
+            // Return the quiz attempts in a JSON response
+            return response()->json([
+                'success' => true,
+                'attempts' => $quizAttempts,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve quiz attempts',
+            ], 500);
+        }
     }
 
     /**
