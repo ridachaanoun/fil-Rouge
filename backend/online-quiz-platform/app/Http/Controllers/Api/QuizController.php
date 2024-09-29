@@ -162,15 +162,6 @@ class QuizController extends Controller
     }
     public function getUserQuizzes($id)
     {
-        // // Get the authenticated user
-        // $user = Auth::user();
-
-        // // Check if user is authenticated
-        // if (!$user) {
-        //     return response()->json(['message' => 'Unauthorized'], 401);
-        // }
-
-        // Fetch quizzes created by the authenticated user
         $quizzes = Quiz::where('user_id', $id)
                         ->with('category', 'questions')
                         ->get();

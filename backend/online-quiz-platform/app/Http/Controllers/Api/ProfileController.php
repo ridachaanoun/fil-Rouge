@@ -130,7 +130,7 @@ class ProfileController extends Controller
     
             return response()->json([
                 'message' => 'Profile picture removed successfully',
-                'profile_picture_url' => '/storage/default-profile.png'
+                'profile_picture_url' => '/storage/default-profile.png',
             ], 200);
         }
 }
