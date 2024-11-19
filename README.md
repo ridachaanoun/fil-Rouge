@@ -4,7 +4,8 @@
 - The Online Quiz Platform is a robust application where users can participate in quizzes, view their results, and administrators can manage quizzes and users.
 - This repository contains the backend implementation built with Laravel.
 - To get the frontend built with Vue.js, visit quiz_frontend.
-🛠 Technologies Used:
+  
+### 🛠 Technologies Used:
 <p align="center"> <img src="https://skillicons.dev/icons?i=laravel,postman,mysql,php,git" alt="Technologies" /> </p>
 
 📄 Installation Instructions:
