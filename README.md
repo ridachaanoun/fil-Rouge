@@ -15,7 +15,7 @@
 
 - PHP (>= 8.1)
 - Composer
-- Node.js and npm (for frontend)
+- Node.js and npm
 - MySQL
 - Git
 
